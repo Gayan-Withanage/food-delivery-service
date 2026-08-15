@@ -1,0 +1,14 @@
+server:
+  port: 8086
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo-payment-service:27017/payment-servicedb
+
+service:
+  api-key: payment-service-secret-key-change-me
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

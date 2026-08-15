@@ -1,0 +1,116 @@
+version: "3.9"
+
+services:
+  # ---------- Databases (one Mongo per service keeps things simple & isolated) ----------
+  mongo-auth:
+    image: mongo:7
+    container_name: mongo-auth
+    ports: ["27018:27017"]
+    volumes: ["mongo-auth-data:/data/db"]
+
+  mongo-restaurant:
+    image: mongo:7
+    container_name: mongo-restaurant
+    ports: ["27019:27017"]
+    volumes: ["mongo-restaurant-data:/data/db"]
+
+  mongo-order:
+    image: mongo:7
+    container_name: mongo-order
+    ports: ["27020:27017"]
+    volumes: ["mongo-order-data:/data/db"]
+
+  mongo-delivery:
+    image: mongo:7
+    container_name: mongo-delivery
+    ports: ["27021:27017"]
+    volumes: ["mongo-delivery-data:/data/db"]
+
+  mongo-notification:
+    image: mongo:7
+    container_name: mongo-notification
+    ports: ["27022:27017"]
+    volumes: ["mongo-notification-data:/data/db"]
+
+  mongo-payment:
+    image: mongo:7
+    container_name: mongo-payment
+    ports: ["27023:27017"]
+    volumes: ["mongo-payment-data:/data/db"]
+
+  # ---------- Microservices ----------
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports: ["8081:8081"]
+    depends_on: [mongo-auth]
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-auth:27017/authdb
+
+  restaurant-service:
+    build: ./restaurant-service
+    container_name: restaurant-service
+    ports: ["8082:8082"]
+    depends_on: [mongo-restaurant]
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-restaurant:27017/restaurant-servicedb
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports: ["8083:8083"]
+    depends_on: [mongo-order]
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-order:27017/order-servicedb
+
+  delivery-service:
+    build: ./delivery-service
+    container_name: delivery-service
+    ports: ["8084:8084"]
+    depends_on: [mongo-delivery]
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-delivery:27017/delivery-servicedb
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports: ["8085:8085"]
+    depends_on: [mongo-notification]
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-notification:27017/notification-servicedb
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports: ["8086:8086"]
+    depends_on: [mongo-payment]
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-payment:27017/payment-servicedb
+
+  # ---------- Gateway ----------
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports: ["8080:8080"]
+    depends_on:
+      - auth-service
+      - restaurant-service
+      - order-service
+      - delivery-service
+      - notification-service
+      - payment-service
+
+  # ---------- Client (uncomment once you've built it) ----------
+  # client-app:
+  #   build: ./client-app
+  #   container_name: client-app
+  #   ports: ["3000:3000"]
+  #   depends_on: [api-gateway]
+
+volumes:
+  mongo-auth-data:
+  mongo-restaurant-data:
+  mongo-order-data:
+  mongo-delivery-data:
+  mongo-notification-data:
+  mongo-payment-data:

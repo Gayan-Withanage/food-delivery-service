@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo-auth:27017/authdb
+
+jwt:
+  secret: change-this-to-a-long-random-secret-in-production-min-32-chars
+  expiration-ms: 3600000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

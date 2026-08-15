@@ -1,0 +1,14 @@
+server:
+  port: 8084
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo-delivery-service:27017/delivery-servicedb
+
+service:
+  api-key: delivery-service-secret-key-change-me
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

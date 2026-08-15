@@ -1,0 +1,14 @@
+server:
+  port: 8082
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo-restaurant-service:27017/restaurant-servicedb
+
+service:
+  api-key: restaurant-service-secret-key-change-me
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

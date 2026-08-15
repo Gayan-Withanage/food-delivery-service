@@ -1,0 +1,14 @@
+server:
+  port: 8083
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo-order-service:27017/order-servicedb
+
+service:
+  api-key: order-service-secret-key-change-me
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
