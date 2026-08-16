@@ -1,45 +1,50 @@
 package com.fooddelivery.restaurant.controller;
 
+import com.fooddelivery.restaurant.dto.RestaurantRequest;
+import com.fooddelivery.restaurant.model.MenuItem;
+import com.fooddelivery.restaurant.model.Restaurant;
+import com.fooddelivery.restaurant.service.RestaurantService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurants")
 public class RestaurantController {
 
-    // TODO: replace in-memory list with a MongoDB repository (see WebConfig for the api-key filter that already protects these routes)
-    private final List<Map<String, Object>> restaurants = new ArrayList<>();
+    private final RestaurantService restaurantService;
+
+    // Constructor injection - no in-memory list anymore, everything goes through MongoDB
+    public RestaurantController(RestaurantService restaurantService) {
+        this.restaurantService = restaurantService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getAll() {
-        // TODO: return all restaurants from MongoDB
-        return ResponseEntity.ok(restaurants);
+    public ResponseEntity<List<Restaurant>> getAll() {
+        return ResponseEntity.ok(restaurantService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getById(@PathVariable String id) {
-        // TODO: fetch single restaurant by id
-        return ResponseEntity.ok(Map.of("id", id, "note", "TODO implement"));
+    public ResponseEntity<Restaurant> getById(@PathVariable String id) {
+        return ResponseEntity.ok(restaurantService.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> restaurant) {
-        // TODO: validate + save to MongoDB
-        restaurants.add(restaurant);
-        return ResponseEntity.status(201).body(restaurant);
+    public ResponseEntity<Restaurant> create(@Valid @RequestBody RestaurantRequest request) {
+        Restaurant saved = restaurantService.create(request);
+        return ResponseEntity.status(201).body(saved);
     }
 
     @GetMapping("/{id}/menu")
-    public ResponseEntity<List<Map<String, Object>>> getMenu(@PathVariable String id) {
-        // TODO: return the menu items belonging to this restaurant
-        return ResponseEntity.ok(new ArrayList<>());
+    public ResponseEntity<List<MenuItem>> getMenu(@PathVariable String id) {
+        return ResponseEntity.ok(restaurantService.getMenu(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        // TODO: delete restaurant by id
+        restaurantService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
