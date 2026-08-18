@@ -26,9 +26,9 @@ services:
     ports: ["27021:27017"]
     volumes: ["mongo-delivery-data:/data/db"]
 
-  mongo-notification:
+  mongo-notification-service:
     image: mongo:7
-    container_name: mongo-notification
+    container_name: mongo-notification-service
     ports: ["27022:27017"]
     volumes: ["mongo-notification-data:/data/db"]
 
@@ -75,9 +75,9 @@ services:
     build: ./notification-service
     container_name: notification-service
     ports: ["8085:8085"]
-    depends_on: [mongo-notification]
+    depends_on: [mongo-notification-service]
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongo-notification:27017/notification-servicedb
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-notification-service:27017/notification-servicedb
 
   payment-service:
     build: ./payment-service
