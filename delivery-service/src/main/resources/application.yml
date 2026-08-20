@@ -7,7 +7,7 @@ spring:
       uri: mongodb://mongo-delivery-service:27017/delivery-servicedb
 
 service:
-  api-key: delivery-service-secret-key-change-me
+  api-key: ab9e48196b29810d80991601bb850d33
 
 springdoc:
   swagger-ui:

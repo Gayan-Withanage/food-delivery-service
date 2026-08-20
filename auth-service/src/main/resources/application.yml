@@ -10,6 +10,9 @@ jwt:
   secret: change-this-to-a-long-random-secret-in-production-min-32-chars
   expiration-ms: 3600000
 
+service:
+  api-key: 70b6ccf48d0f26e0543104d3738e4dbe
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

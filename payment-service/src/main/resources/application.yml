@@ -7,7 +7,7 @@ spring:
       uri: mongodb://mongo-payment-service:27017/payment-servicedb
 
 service:
-  api-key: payment-service-secret-key-change-me
+  api-key: 8e5ca88f08921358127efe705aa1cd25
 
 springdoc:
   swagger-ui:

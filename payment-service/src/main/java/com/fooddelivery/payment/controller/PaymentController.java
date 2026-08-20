@@ -1,35 +1,37 @@
 package com.fooddelivery.payment.controller;
 
+import com.fooddelivery.payment.model.Payment;
+import com.fooddelivery.payment.repository.PaymentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
 
-    private final List<Map<String, Object>> history = new ArrayList<>();
+    private final PaymentRepository paymentRepository;
+
+    public PaymentController(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     @PostMapping("/process")
-    public ResponseEntity<Map<String, Object>> process(@RequestBody Map<String, Object> request) {
-        // TODO: integrate a real/mock payment provider, persist to MongoDB
-        Map<String, Object> payment = new HashMap<>(request);
-        payment.put("id", UUID.randomUUID().toString());
-        payment.put("status", "SUCCESS_TODO");
-        history.add(payment);
-        return ResponseEntity.ok(payment);
+    public ResponseEntity<Payment> process(@RequestBody Payment payment) {
+        payment.setStatus("SUCCESS");
+        Payment saved = paymentRepository.save(payment);
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<Map<String, Object>>> history() {
-        return ResponseEntity.ok(history);
+    public ResponseEntity<List<Payment>> history() {
+        return ResponseEntity.ok(paymentRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getById(@PathVariable String id) {
-        return history.stream().filter(p -> id.equals(p.get("id")))
-                .findFirst()
+    public ResponseEntity<Payment> getById(@PathVariable String id) {
+        return paymentRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

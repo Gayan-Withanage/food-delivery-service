@@ -7,7 +7,7 @@ spring:
       uri: mongodb://mongo-notification-service:27017/notification-servicedb
 
 service:
-  api-key: notification-service-secret-key-change-me
+  api-key: 7f30596e43ac7f5e9b902c7728dffbe5
 
 springdoc:
   swagger-ui:
