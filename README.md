@@ -7,12 +7,12 @@ a Spring Cloud API Gateway, MongoDB, and Docker.
 
 | Student | Role | Microservice | Folder |
 |---|---|---|---|
-| Student 1 | Gateway Lead | User & Auth Service | `auth-service/`, `api-gateway/` |
-| Student 2 | Member | Restaurant Service | `restaurant-service/` |
-| Student 3 | Member | Order Service | `order-service/` |
-| Student 4 | Member | Delivery Service | `delivery-service/` |
-| Student 5 | Member | Notification Service | `notification-service/` |
-| Student 6 | Member | Payment Service | `payment-service/` |
+| ITBNM-2313-0023 | Gateway Lead | User & Auth Service | `auth-service/`, `api-gateway/` |
+| ITBNM-2313-0032 | Member | Restaurant Service | `restaurant-service/` |
+| ITBNM-2313-0065 | Member | Order Service | `order-service/` |
+| ITBNM-2313-0005 | Member | Delivery Service | `delivery-service/` |
+| ITBNM-2313-0003 | Member | Notification Service | `notification-service/` |
+| ITBNM-2313-0055 | Member | Payment Service | `payment-service/` |
 
 > Replace "Student N" with real names before submission — the brief requires
 > explicit ownership declared in both the report and the repo.
