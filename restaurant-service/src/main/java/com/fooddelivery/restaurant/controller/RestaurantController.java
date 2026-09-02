@@ -1,50 +1,48 @@
 package com.fooddelivery.restaurant.controller;
 
-import com.fooddelivery.restaurant.dto.RestaurantRequest;
-import com.fooddelivery.restaurant.model.MenuItem;
 import com.fooddelivery.restaurant.model.Restaurant;
-import com.fooddelivery.restaurant.service.RestaurantService;
-import jakarta.validation.Valid;
+import com.fooddelivery.restaurant.repository.RestaurantRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "ApiKeyAuth")
 @RestController
 @RequestMapping("/api/restaurants")
 public class RestaurantController {
 
-    private final RestaurantService restaurantService;
+    private final RestaurantRepository restaurantRepository;
 
-    // Constructor injection - no in-memory list anymore, everything goes through MongoDB
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
+    public RestaurantController(RestaurantRepository restaurantRepository) {
+        this.restaurantRepository = restaurantRepository;
     }
 
     @GetMapping
     public ResponseEntity<List<Restaurant>> getAll() {
-        return ResponseEntity.ok(restaurantService.getAll());
+        return ResponseEntity.ok(restaurantRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> getById(@PathVariable String id) {
-        return ResponseEntity.ok(restaurantService.getById(id));
+        return restaurantRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Restaurant> create(@Valid @RequestBody RestaurantRequest request) {
-        Restaurant saved = restaurantService.create(request);
+    public ResponseEntity<Restaurant> create(@RequestBody Restaurant restaurant) {
+        Restaurant saved = restaurantRepository.save(restaurant);
         return ResponseEntity.status(201).body(saved);
-    }
-
-    @GetMapping("/{id}/menu")
-    public ResponseEntity<List<MenuItem>> getMenu(@PathVariable String id) {
-        return ResponseEntity.ok(restaurantService.getMenu(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        restaurantService.delete(id);
+        if (!restaurantRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        restaurantRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,7 @@
 package com.fooddelivery.order.controller;
 
+import com.fooddelivery.order.model.Order;
+import com.fooddelivery.order.repository.OrderRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,32 +11,42 @@ import java.util.*;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    // TODO: replace with a MongoDB repository
-    private final Map<String, Map<String, Object>> orders = new HashMap<>();
+    private final OrderRepository orderRepository;
+
+    public OrderController(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     @GetMapping
-    public ResponseEntity<Collection<Map<String, Object>>> getAll() {
-        return ResponseEntity.ok(orders.values());
+    public ResponseEntity<List<Order>> getAll() {
+        return ResponseEntity.ok(orderRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getById(@PathVariable String id) {
-        return ResponseEntity.ok(orders.getOrDefault(id, Map.of("id", id, "note", "TODO implement")));
+    public ResponseEntity<Order> getById(@PathVariable String id) {
+        return orderRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> order) {
-        // TODO: validate items, call Restaurant Service to check menu/prices, persist
-        String id = UUID.randomUUID().toString();
-        order.put("id", id);
-        order.put("status", "CREATED");
-        orders.put(id, order);
-        return ResponseEntity.status(201).body(order);
+    public ResponseEntity<Order> create(@RequestBody Order order) {
+        order.setStatus("CREATED");
+        Order saved = orderRepository.save(order);
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PostMapping("/checkout")
     public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, Object> checkoutRequest) {
-        // TODO: call Payment Service (/payments/process) then Delivery Service (/delivery/assign)
-        return ResponseEntity.ok(Map.of("status", "CHECKOUT_TODO", "request", checkoutRequest));
+        String orderId = String.valueOf(checkoutRequest.get("orderId"));
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("error", "Order not found"));
+        }
+        Order order = orderOpt.get();
+        order.setStatus("CHECKED_OUT");
+        orderRepository.save(order);
+        // TODO: call Payment Service and Delivery Service here with WebClient
+        return ResponseEntity.ok(Map.of("status", "CHECKED_OUT", "orderId", orderId));
     }
 }

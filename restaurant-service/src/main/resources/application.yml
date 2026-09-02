@@ -7,7 +7,7 @@ spring:
       uri: mongodb://mongo-restaurant-service:27017/restaurant-servicedb
 
 service:
-  api-key: restaurant-service-secret-key-change-me
+  api-key: 5d9ed270ef016a016b30027645689ffe
 
 springdoc:
   swagger-ui:
